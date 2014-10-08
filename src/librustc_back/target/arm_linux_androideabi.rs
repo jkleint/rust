@@ -8,10 +8,15 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use target::{Target, TargetOptions};
+use target::Target;
 
 pub fn target() -> Target {
-    let base = super::linux_base::opts();
+    let mut base = super::linux_base::opts();
+    base.features = "+v7".to_string();
+    // Many of the symbols defined in compiler-rt are also defined in libgcc.  Android
+    // linker doesn't like that by default.
+    base.pre_link_args.push("-Wl,--allow-multiple-definition".to_string());
+
     Target {
         data_layout: "e-p:32:32:32\
                       -i1:8:8-i8:8:8-i16:16:16-i32:32:32-i64:64:64\
@@ -23,14 +28,6 @@ pub fn target() -> Target {
         target_word_size: "32".to_string(),
         arch: "arm".to_string(),
         target_os: "android".to_string(),
-
-        options: TargetOptions {
-            features: "+v7".to_string(),
-            pre_link_args: base.pre_link_args.clone()
-                // Many of the symbols defined in compiler-rt are also defined in libgcc.  Android
-                // linker doesn't like that by default.
-                .append_one("-Wl,--allow-multiple-definition".to_string()),
-            .. base
-        }
+        options: base,
     }
 }

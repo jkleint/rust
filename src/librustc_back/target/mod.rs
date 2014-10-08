@@ -354,7 +354,11 @@ impl Target {
             return load_file(&path);
         }
 
-        let path = Path::new(target.to_string().append(".json"));
+        let path = {
+            let mut target = target.to_string();
+            target.push_str(".json");
+            Path::new(target)
+        };
 
         let target_path = os::getenv("RUST_TARGET_PATH").unwrap_or(String::new());
 

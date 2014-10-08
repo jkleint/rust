@@ -8,10 +8,10 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use target::{Target, TargetOptions};
+use target::Target;
 
 pub fn target() -> Target {
-    let base = super::windows_base::opts();
+    let mut base = super::windows_base::opts();
     // On Win64 unwinding is handled by the OS, so we can link libgcc statically.
     base.pre_link_args.push("-static-libgcc".to_string());
     base.pre_link_args.push("-m64".to_string());

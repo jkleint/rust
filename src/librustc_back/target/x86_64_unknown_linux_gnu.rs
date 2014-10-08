@@ -8,10 +8,12 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use target::{Target, TargetOptions};
+use target::Target;
 
 pub fn target() -> Target {
-    let base = super::linux_base::opts();
+    let mut base = super::linux_base::opts();
+    base.pre_link_args.push("-m64".to_string());
+
     Target {
         data_layout: "e-p:64:64:64-i1:8:8-i8:8:8-i16:16:16-i32:32:32-i64:64:64-\
                       f32:32:32-f64:64:64-v64:64:64-v128:128:128-a0:0:64-\
@@ -21,9 +23,6 @@ pub fn target() -> Target {
         target_word_size: "64".to_string(),
         arch: "x86_64".to_string(),
         target_os: "linux".to_string(),
-        options: TargetOptions {
-            pre_link_args: base.pre_link_args.clone().append_one("-m64".to_string()),
-            .. base
-        }
+        options: base,
     }
 }
