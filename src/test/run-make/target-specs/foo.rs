@@ -8,12 +8,19 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+#![feature(lang_items)]
 #![no_std]
 
+#[lang="sized"]
+trait Sized { }
+
+#[lang="start"]
+fn start(_main: *const u8, _argc: int, _argv: *const *const u8) -> int { 0 }
+
 extern {
-    fn foo() -> [u8, ..16];
+    fn _foo() -> [u8, ..16];
 }
 
-fn main() {
-    let a = unsafe { foo() };
+fn _main() {
+    let _a = unsafe { _foo() };
 }
