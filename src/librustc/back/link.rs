@@ -914,6 +914,12 @@ fn link_args(cmd: &mut Command,
     // Rust does its' own LTO
     cmd.arg("-fno-lto");
 
+    if t.options.is_like_osx {
+        // -dead_strip can't be part of the pre_link_args because it's also used for partial
+        // linking when using multiple codegen units (-r). So we insert it here.
+        cmd.arg("-Wl,-dead_strip");
+    }
+
     // If we're building a dylib, we don't use --gc-sections because LLVM has
     // already done the best it can do, and we also don't want to eliminate the
     // metadata. If we're building an executable, however, --gc-sections drops
