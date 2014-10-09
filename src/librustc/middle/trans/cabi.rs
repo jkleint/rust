@@ -13,6 +13,7 @@ use std::option;
 use middle::trans::context::CrateContext;
 use middle::trans::cabi_x86;
 use middle::trans::cabi_x86_64;
+use middle::trans::cabi_x86_win64;
 use middle::trans::cabi_arm;
 use middle::trans::cabi_mips;
 use middle::trans::type_::Type;
@@ -106,7 +107,11 @@ pub fn compute_abi_info(ccx: &CrateContext,
                         ret_def: bool) -> FnType {
     match ccx.sess().target.target.arch.as_slice() {
         "x86" => cabi_x86::compute_abi_info(ccx, atys, rty, ret_def),
-        "x86_64" => cabi_x86_64::compute_abi_info(ccx, atys, rty, ret_def),
+        "x86_64" => if ccx.sess().target.target.arch.as_slice() == "windows" {
+            cabi_x86_win64::compute_abi_info(ccx, atys, rty, ret_def)
+        } else {
+            cabi_x86_64::compute_abi_info(ccx, atys, rty, ret_def)
+        },
         "arm" => cabi_arm::compute_abi_info(ccx, atys, rty, ret_def),
         "mips" => cabi_mips::compute_abi_info(ccx, atys, rty, ret_def),
         a => ccx.sess().fatal((format!("unrecognized arch \"{}\" in target specification", a))
